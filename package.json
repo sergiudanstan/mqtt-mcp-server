@@ -12,6 +12,7 @@
     "watch": "tsc --watch",
     "start": "node build/index.js",
     "start:web": "node build/web-server.js",
+    "app": "bash start-app.sh",
     "setup": "bash setup-mcp.sh",
     "setup:windows": "powershell -ExecutionPolicy Bypass -File setup-mcp.ps1"
   },
