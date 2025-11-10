@@ -7,7 +7,7 @@ Provides MQTT client functionality through Model Context Protocol
 import asyncio
 from typing import Optional, Dict, Set
 import paho.mqtt.client as mqtt
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 
 # Initialize FastMCP server
 mcp = FastMCP("MQTT MCP Server")
