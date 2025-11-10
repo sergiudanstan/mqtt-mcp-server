@@ -2,10 +2,13 @@
 
 An MCP (Model Context Protocol) server that provides MQTT client functionality. This allows Claude to interact with MQTT brokers - publishing messages, subscribing to topics, and managing connections.
 
+Available in **both TypeScript (Node.js)** and **Python (FastMCP)** versions!
+
 ## Features
 
 - **MCP Server**: Connect to MQTT brokers through Claude
 - **Web Application**: Real-time background color changes via MQTT
+- **Dual Implementation**: TypeScript (local) + Python (cloud deployment)
 - Connect to MQTT brokers (supports mqtt:// and mqtts://)
 - Publish messages to topics with QoS and retain options
 - Subscribe to topics (including wildcard subscriptions)
@@ -14,19 +17,35 @@ An MCP (Model Context Protocol) server that provides MQTT client functionality. 
 - Disconnect from brokers
 - WebSocket real-time updates
 - Interactive web UI with color presets
+- FastMCP Cloud ready for one-click deployment
 
-## Installation
+## Quick Start
+
+### TypeScript Version (Local)
 
 ```bash
 npm install
 npm run build
 ```
 
+### Python Version (FastMCP Cloud)
+
+See [FASTMCP_DEPLOYMENT.md](FASTMCP_DEPLOYMENT.md) for one-click cloud deployment!
+
 ## Usage
 
 ### As a Claude Desktop MCP Server
 
-Add this to your Claude Desktop configuration file:
+#### Option 1: TypeScript Version (Local - Easy Setup)
+
+Run the automated setup script:
+
+```bash
+npm run setup  # macOS/Linux
+npm run setup:windows  # Windows
+```
+
+Or manually add this to your Claude Desktop configuration file:
 
 **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
@@ -43,6 +62,17 @@ Add this to your Claude Desktop configuration file:
 ```
 
 After adding this configuration, restart Claude Desktop.
+
+#### Option 2: Python Version (FastMCP Cloud - Recommended)
+
+Deploy to FastMCP Cloud for cloud-hosted MQTT MCP server:
+
+1. Visit [https://fastmcp.cloud](https://fastmcp.cloud)
+2. Create a project from this GitHub repository
+3. Set entrypoint to `mqtt_mcp_server.py`
+4. Deploy with one click!
+
+See [FASTMCP_DEPLOYMENT.md](FASTMCP_DEPLOYMENT.md) for detailed instructions.
 
 ### Web Application with Color Changing Background
 
