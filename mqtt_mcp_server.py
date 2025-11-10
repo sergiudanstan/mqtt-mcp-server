@@ -20,29 +20,32 @@ mqtt_broker_url: str = ""
 message_callbacks: Dict[str, callable] = {}
 
 
-def on_connect(client, userdata, flags, rc, properties=None):
+def on_connect(client, userdata, flags, reason_code, properties=None):
     """Callback when MQTT client connects"""
     global mqtt_connected
+    # Handle both v1 (rc as int) and v2 (reason_code) APIs
+    rc = reason_code if isinstance(reason_code, int) else reason_code.value if hasattr(reason_code, 'value') else 0
     if rc == 0:
         mqtt_connected = True
-        print(f"Connected to MQTT broker with result code {rc}")
+        print(f"Connected to MQTT broker with result code {rc}", flush=True)
     else:
         mqtt_connected = False
-        print(f"Failed to connect to MQTT broker with result code {rc}")
+        print(f"Failed to connect to MQTT broker with result code {rc}", flush=True)
 
 
-def on_disconnect(client, userdata, rc, properties=None):
+def on_disconnect(client, userdata, flags, reason_code, properties=None):
     """Callback when MQTT client disconnects"""
     global mqtt_connected
     mqtt_connected = False
-    print(f"Disconnected from MQTT broker with result code {rc}")
+    rc = reason_code if isinstance(reason_code, int) else reason_code.value if hasattr(reason_code, 'value') else 0
+    print(f"Disconnected from MQTT broker with result code {rc}", flush=True)
 
 
 def on_message(client, userdata, msg):
     """Callback when MQTT message is received"""
     topic = msg.topic
     payload = msg.payload.decode('utf-8', errors='ignore')
-    print(f"Received message on topic '{topic}': {payload}")
+    print(f"Received message on topic '{topic}': {payload}", flush=True)
 
 
 @mcp.tool()
@@ -72,11 +75,18 @@ async def mqtt_connect(
         return "Already connected to MQTT broker. Disconnect first if you want to connect to a different broker."
 
     try:
-        # Create MQTT client
+        # Create MQTT client with callback API version 2 (paho-mqtt 2.x)
         if client_id:
-            mqtt_client = mqtt.Client(client_id=client_id, protocol=mqtt.MQTTv5)
+            mqtt_client = mqtt.Client(
+                callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
+                client_id=client_id,
+                protocol=mqtt.MQTTv311  # Use MQTTv3.1.1 for better compatibility
+            )
         else:
-            mqtt_client = mqtt.Client(protocol=mqtt.MQTTv5)
+            mqtt_client = mqtt.Client(
+                callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
+                protocol=mqtt.MQTTv311
+            )
 
         # Set callbacks
         mqtt_client.on_connect = on_connect
