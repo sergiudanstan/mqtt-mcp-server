@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MQTT MCP Color Changer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.5s ease;
+            background-color: #282c34;
+            color: white;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            max-width: 600px;
+            width: 90%;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #e74c3c;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.connected {
+            background-color: #2ecc71;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .info p {
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        .info strong {
+            color: #61dafb;
+        }
+
+        .current-color {
+            font-size: 1.2rem;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .test-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .test-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .color-input {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        input[type="text"], input[type="color"] {
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        input[type="color"] {
+            width: 60px;
+            height: 45px;
+            cursor: pointer;
+        }
+
+        button {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            background: #61dafb;
+            color: #282c34;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #4fa8c5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .color-presets {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+        }
+
+        .preset-btn {
+            padding: 0.8rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .message {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .message.show {
+            opacity: 1;
+        }
+
+        .message.success {
+            background: rgba(46, 204, 113, 0.3);
+        }
+
+        .message.error {
+            background: rgba(231, 76, 60, 0.3);
+        }
+
+        .instructions {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+
+        .instructions h3 {
+            margin-bottom: 0.5rem;
+            color: #61dafb;
+        }
+
+        .instructions code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #2ecc71;
+        }
+
+        .instructions ol {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .instructions li {
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MQTT MCP Color Changer</h1>
+
+        <div class="status">
+            <span class="status-indicator" id="statusIndicator"></span>
+            <span id="statusText">Connecting...</span>
+        </div>
+
+        <div class="info">
+            <p><strong>MQTT Broker:</strong> <span id="mqttBroker">-</span></p>
+            <p><strong>Topic:</strong> <span id="mqttTopic">-</span></p>
+            <div class="current-color">
+                <strong>Current Color:</strong> <span id="currentColor">#282c34</span>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>Test Color Change</h2>
+            <div class="color-input">
+                <input type="text" id="colorInput" placeholder="Enter color (e.g., red, #FF5733)">
+                <input type="color" id="colorPicker" value="#FF5733">
+                <button onclick="publishColor()">Publish</button>
+            </div>
+
+            <div class="color-presets">
+                <button class="preset-btn" style="background: #e74c3c;" onclick="publishPreset('#e74c3c')">Red</button>
+                <button class="preset-btn" style="background: #3498db;" onclick="publishPreset('#3498db')">Blue</button>
+                <button class="preset-btn" style="background: #2ecc71;" onclick="publishPreset('#2ecc71')">Green</button>
+                <button class="preset-btn" style="background: #f39c12;" onclick="publishPreset('#f39c12')">Orange</button>
+                <button class="preset-btn" style="background: #9b59b6;" onclick="publishPreset('#9b59b6')">Purple</button>
+                <button class="preset-btn" style="background: #1abc9c;" onclick="publishPreset('#1abc9c')">Teal</button>
+            </div>
+
+            <div id="message" class="message"></div>
+        </div>
+
+        <div class="instructions">
+            <h3>How to use with MCP:</h3>
+            <ol>
+                <li>Ask Claude to connect to the MQTT broker</li>
+                <li>Ask Claude to publish a color to the topic</li>
+                <li>Watch the background change in real-time!</li>
+            </ol>
+            <p style="margin-top: 1rem;">
+                <strong>Example:</strong><br>
+                <code>Connect to mqtt://test.mosquitto.org:1883 and publish "red" to topic "color/change"</code>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        let ws;
+        let reconnectInterval;
+
+        function connect() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            ws = new WebSocket(`${protocol}//${window.location.host}`);
+
+            ws.onopen = () => {
+                console.log('WebSocket connected');
+                clearInterval(reconnectInterval);
+            };
+
+            ws.onmessage = (event) => {
+                const message = JSON.parse(event.data);
+                console.log('Received:', message);
+
+                switch (message.type) {
+                    case 'status':
+                        updateStatus(message.data);
+                        break;
+                    case 'color':
+                        changeColor(message.data.color);
+                        break;
+                    case 'error':
+                        showMessage(message.data.message, 'error');
+                        break;
+                }
+            };
+
+            ws.onclose = () => {
+                console.log('WebSocket disconnected');
+                updateStatus({ connected: false });
+
+                // Attempt to reconnect every 5 seconds
+                reconnectInterval = setInterval(() => {
+                    console.log('Attempting to reconnect...');
+                    connect();
+                }, 5000);
+            };
+
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+            };
+        }
+
+        function updateStatus(data) {
+            const indicator = document.getElementById('statusIndicator');
+            const text = document.getElementById('statusText');
+
+            if (data.connected) {
+                indicator.classList.add('connected');
+                text.textContent = 'Connected to MQTT';
+
+                if (data.broker) {
+                    document.getElementById('mqttBroker').textContent = data.broker;
+                }
+                if (data.topic) {
+                    document.getElementById('mqttTopic').textContent = data.topic;
+                }
+            } else {
+                indicator.classList.remove('connected');
+                text.textContent = 'Disconnected';
+            }
+        }
+
+        function changeColor(color) {
+            document.body.style.backgroundColor = color;
+            document.getElementById('currentColor').textContent = color;
+            showMessage(`Background changed to ${color}`, 'success');
+        }
+
+        function publishColor() {
+            const input = document.getElementById('colorInput');
+            const color = input.value.trim();
+
+            if (!color) {
+                showMessage('Please enter a color', 'error');
+                return;
+            }
+
+            fetch('/api/publish', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ color }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage(`Published: ${color}`, 'success');
+                    input.value = '';
+                } else {
+                    showMessage(data.error || 'Failed to publish', 'error');
+                }
+            })
+            .catch(error => {
+                showMessage(`Error: ${error.message}`, 'error');
+            });
+        }
+
+        function publishPreset(color) {
+            fetch('/api/publish', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ color }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage(`Published: ${color}`, 'success');
+                } else {
+                    showMessage(data.error || 'Failed to publish', 'error');
+                }
+            })
+            .catch(error => {
+                showMessage(`Error: ${error.message}`, 'error');
+            });
+        }
+
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = `message ${type} show`;
+
+            setTimeout(() => {
+                messageEl.classList.remove('show');
+            }, 3000);
+        }
+
+        // Update color input when color picker changes
+        document.getElementById('colorPicker').addEventListener('input', (e) => {
+            document.getElementById('colorInput').value = e.target.value;
+        });
+
+        // Allow Enter key to publish
+        document.getElementById('colorInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                publishColor();
+            }
+        });
+
+        // Connect on page load
+        connect();
+    </script>
+</body>
+</html>
