@@ -80,12 +80,16 @@ async def mqtt_connect(
             mqtt_client = mqtt.Client(
                 callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
                 client_id=client_id,
-                protocol=mqtt.MQTTv311  # Use MQTTv3.1.1 for better compatibility
+                protocol=mqtt.MQTTv311,  # Use MQTTv3.1.1 for better compatibility
+                clean_session=True,
+                reconnect_on_failure=True
             )
         else:
             mqtt_client = mqtt.Client(
                 callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
-                protocol=mqtt.MQTTv311
+                protocol=mqtt.MQTTv311,
+                clean_session=True,
+                reconnect_on_failure=True
             )
 
         # Set callbacks
@@ -97,6 +101,9 @@ async def mqtt_connect(
         if username:
             mqtt_client.username_pw_set(username, password)
 
+        # Configure reconnection settings
+        mqtt_client.reconnect_delay_set(min_delay=1, max_delay=120)
+
         # Connect to broker
         mqtt_broker_url = f"{broker_url}:{port}"
         mqtt_client.connect(broker_url, port, keepalive=60)
@@ -105,13 +112,21 @@ async def mqtt_connect(
         mqtt_client.loop_start()
 
         # Wait a bit for connection to establish
-        await asyncio.sleep(1)
+        await asyncio.sleep(2)
 
         if mqtt_connected:
             return f"Successfully connected to MQTT broker at {mqtt_broker_url}"
         else:
-            return f"Connection initiated to {mqtt_broker_url}, but not yet confirmed. Please check broker availability."
+            return f"Connection initiated to {mqtt_broker_url}. If not connected, the client will auto-retry. Check broker availability."
 
+    except ConnectionRefusedError:
+        mqtt_connected = False
+        return f"Connection refused by MQTT broker at {broker_url}:{port}. Check if broker is running and accessible."
+    except OSError as e:
+        mqtt_connected = False
+        if "ECONNRESET" in str(e):
+            return f"Connection reset by MQTT broker. This is often temporary - try again or check broker status."
+        return f"Network error connecting to MQTT broker: {str(e)}"
     except Exception as e:
         mqtt_connected = False
         return f"Failed to connect to MQTT broker: {str(e)}"

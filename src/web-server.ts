@@ -110,17 +110,20 @@ function connectMQTT() {
   mqttClient = mqtt.connect(MQTT_BROKER, {
     reconnectPeriod: 5000,
     connectTimeout: 10000,
+    keepalive: 60,
+    clean: true,
+    resubscribe: true,
   });
 
   mqttClient.on("connect", () => {
-    console.log(`Connected to MQTT broker: ${MQTT_BROKER}`);
+    console.log(`✅ Connected to MQTT broker: ${MQTT_BROKER}`);
     console.log(`Subscribing to topic: ${MQTT_TOPIC}`);
 
     mqttClient.subscribe(MQTT_TOPIC, (error) => {
       if (error) {
-        console.error("Failed to subscribe:", error);
+        console.error("❌ Failed to subscribe:", error);
       } else {
-        console.log(`Successfully subscribed to ${MQTT_TOPIC}`);
+        console.log(`✅ Successfully subscribed to ${MQTT_TOPIC}`);
         broadcast({
           type: "status",
           data: { connected: true, broker: MQTT_BROKER, topic: MQTT_TOPIC },
@@ -131,7 +134,7 @@ function connectMQTT() {
 
   mqttClient.on("message", (topic, message) => {
     const color = message.toString();
-    console.log(`Received color on topic "${topic}": ${color}`);
+    console.log(`📨 Received color on topic "${topic}": ${color}`);
 
     // Broadcast the color change to all connected WebSocket clients
     broadcast({
@@ -141,15 +144,22 @@ function connectMQTT() {
   });
 
   mqttClient.on("error", (error) => {
-    console.error("MQTT error:", error);
+    const errorMessage = error.message || String(error);
+    console.error(`❌ MQTT error: ${errorMessage}`);
+
+    // Handle ECONNRESET and other connection errors
+    if (errorMessage.includes("ECONNRESET") || errorMessage.includes("ECONNREFUSED")) {
+      console.log("⚠️  Connection error detected. Client will auto-reconnect in 5 seconds...");
+    }
+
     broadcast({
       type: "error",
-      data: { message: error.message },
+      data: { message: errorMessage },
     });
   });
 
   mqttClient.on("disconnect", () => {
-    console.log("Disconnected from MQTT broker");
+    console.log("⚠️  Disconnected from MQTT broker");
     broadcast({
       type: "status",
       data: { connected: false },
@@ -157,7 +167,19 @@ function connectMQTT() {
   });
 
   mqttClient.on("reconnect", () => {
-    console.log("Reconnecting to MQTT broker...");
+    console.log("🔄 Reconnecting to MQTT broker...");
+    broadcast({
+      type: "status",
+      data: { connected: false, reconnecting: true },
+    });
+  });
+
+  mqttClient.on("offline", () => {
+    console.log("📴 MQTT client is offline. Will retry connection...");
+  });
+
+  mqttClient.on("close", () => {
+    console.log("🔌 MQTT connection closed");
   });
 }
 
