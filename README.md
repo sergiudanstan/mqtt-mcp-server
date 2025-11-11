@@ -83,7 +83,7 @@ The web application subscribes to MQTT messages and changes its background color
 npm run start:web
 
 # Or specify custom settings
-MQTT_BROKER=mqtt://test.mosquitto.org:1883 MQTT_TOPIC=color/change PORT=3000 npm run start:web
+MQTT_BROKER=mqtt://broker.hivemq.com:1883 MQTT_TOPIC=color/change PORT=3000 npm run start:web
 ```
 
 Then open your browser to `http://localhost:3000`
@@ -94,7 +94,7 @@ Then open your browser to `http://localhost:3000`
 3. You can test it from the web UI or ask Claude to publish colors via the MCP server
 
 **Environment Variables:**
-- `MQTT_BROKER`: MQTT broker URL (default: `mqtt://test.mosquitto.org:1883`)
+- `MQTT_BROKER`: MQTT broker URL (default: `mqtt://broker.hivemq.com:1883`)
 - `MQTT_TOPIC`: Topic to subscribe to (default: `color/change`)
 - `PORT`: Web server port (default: `3000`)
 
@@ -118,7 +118,7 @@ Connect to an MQTT broker.
 
 **Example:**
 ```
-Connect to mqtt://test.mosquitto.org:1883
+Connect to mqtt://broker.hivemq.com:1883
 ```
 
 ### mqtt_publish
@@ -179,7 +179,7 @@ Get the current connection status including active subscriptions.
 
 3. **Ask Claude to publish colors** (via MCP):
    ```
-   Connect to mqtt://test.mosquitto.org:1883 and publish "red" to topic "color/change"
+   Connect to mqtt://broker.hivemq.com:1883 and publish "red" to topic "color/change"
    ```
 
 4. **Watch the background change** in real-time!
@@ -195,7 +195,7 @@ Get the current connection status including active subscriptions.
 
 1. Connect to a broker:
    ```
-   Connect to the public MQTT broker at mqtt://test.mosquitto.org:1883
+   Connect to the public MQTT broker at mqtt://broker.hivemq.com:1883
    ```
 
 2. Subscribe to a topic:
@@ -222,7 +222,7 @@ Get the current connection status including active subscriptions.
 
 For testing, you can use these public MQTT brokers:
 
-- `mqtt://test.mosquitto.org:1883` (Eclipse Mosquitto)
+- `mqtt://broker.hivemq.com:1883` (Eclipse Mosquitto)
 - `mqtt://broker.hivemq.com:1883` (HiveMQ)
 - `mqtt://mqtt.eclipseprojects.io:1883` (Eclipse IoT)
 

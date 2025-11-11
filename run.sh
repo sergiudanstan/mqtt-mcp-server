@@ -21,7 +21,7 @@ if [ ! -d "node_modules" ]; then
 fi
 
 echo "🚀 Starting web server..."
-echo "📡 MQTT Broker: ${MQTT_BROKER:-mqtt://test.mosquitto.org:1883}"
+echo "📡 MQTT Broker: ${MQTT_BROKER:-mqtt://broker.hivemq.com:1883}"
 echo "📌 Topic: ${MQTT_TOPIC:-color/change}"
 echo "🌐 Port: ${PORT:-3000}"
 echo ""

@@ -69,7 +69,7 @@ Write-Host "📌 Next Steps:" -ForegroundColor Yellow
 Write-Host "   1. Restart Claude Desktop completely (Quit and reopen)"
 Write-Host "   2. Start the web server: npm run start:web"
 Write-Host "   3. Open http://localhost:3000 in your browser"
-Write-Host "   4. In Claude Desktop, ask: 'Connect to mqtt://test.mosquitto.org:1883 and publish ""blue"" to topic ""color/change""'"
+Write-Host "   4. In Claude Desktop, ask: 'Connect to mqtt://broker.hivemq.com:1883 and publish ""blue"" to topic ""color/change""'"
 Write-Host "   5. Watch the background change! 🎨"
 Write-Host ""
 Write-Host "💡 Tip: You can verify the MCP server is loaded by checking the" -ForegroundColor Cyan

@@ -20,7 +20,7 @@ if not exist "node_modules" (
 )
 
 echo 🚀 Starting web server...
-echo 📡 MQTT Broker: %MQTT_BROKER% (default: mqtt://test.mosquitto.org:1883)
+echo 📡 MQTT Broker: %MQTT_BROKER% (default: mqtt://broker.hivemq.com:1883)
 echo 📌 Topic: %MQTT_TOPIC% (default: color/change)
 echo 🌐 Port: %PORT% (default: 3000)
 echo.

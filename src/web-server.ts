@@ -12,7 +12,7 @@ const __dirname = dirname(__filename);
 
 // Configuration
 const PORT = process.env.PORT || 3000;
-const MQTT_BROKER = process.env.MQTT_BROKER || "mqtt://test.mosquitto.org:1883";
+const MQTT_BROKER = process.env.MQTT_BROKER || "mqtt://broker.hivemq.com:1883";
 const MQTT_TOPIC = process.env.MQTT_TOPIC || "color/change";
 
 // Create Express app
