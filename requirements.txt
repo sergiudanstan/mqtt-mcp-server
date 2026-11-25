@@ -1,2 +1,2 @@
-fastmcp>=2.0.0
+fastmcp>=4.2.4
 paho-mqtt>=2.1.0
