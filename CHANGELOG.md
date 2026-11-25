@@ -6,6 +6,14 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-11-25
+
+### Fixed
+- The release workflow builds the SBOM from `package-lock.json` (`npm sbom --package-lock-only`).
+  It used to run after an install without devDependencies, and `npm sbom` refused the incomplete
+  tree, so the `v1.1.0` tag never produced a release. That tag is kept as it is; this is the first
+  published release.
+
 ## [1.1.0] - 2026-11-25
 
 First tagged release (`package.json` already declared 1.0.0). An MCP server with six MQTT
@@ -30,5 +38,6 @@ its background colour from MQTT messages. The application code is unchanged in t
   (`@modelcontextprotocol/sdk`, `hono`, `qs`, `ws`, `body-parser` and others); `package.json`
   ranges for runtime dependencies are unchanged.
 
-[Unreleased]: https://github.com/sergiudanstan/mqtt-mcp-server/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/sergiudanstan/mqtt-mcp-server/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/sergiudanstan/mqtt-mcp-server/releases/tag/v1.1.1
 [1.1.0]: https://github.com/sergiudanstan/mqtt-mcp-server/releases/tag/v1.1.0

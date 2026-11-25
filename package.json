@@ -1,6 +1,6 @@
 {
   "name": "mqtt-mcp-server",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "An MCP server that provides MQTT client functionality",
   "type": "module",
   "main": "build/index.js",
