@@ -1,0 +1,34 @@
+# Changelog
+
+All notable changes to this project are documented here. The format follows
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [1.1.0] - 2026-11-25
+
+First tagged release (`package.json` already declared 1.0.0). An MCP server with six MQTT
+tools (connect, publish, subscribe, unsubscribe, disconnect, status) in a TypeScript
+implementation (stdio) and a Python FastMCP implementation, plus a web app that changes
+its background colour from MQTT messages. The application code is unchanged in this release.
+
+### Added
+- Tests: the TypeScript server over a real MCP stdio session and the web app (HTTP and
+  WebSocket) against an in-process MQTT broker (`npm test`, `aedes` as a dev dependency);
+  the Python server through FastMCP's in-memory client with a faked paho client (`pytest`).
+  All run in CI.
+- CI (Node build and tests, Python lint and tests, `npm audit`, `pip-audit`, `zizmor`),
+  CodeQL for JavaScript/TypeScript, Python and Actions, OpenSSF Scorecard and a
+  tag-triggered release workflow with an SBOM and build provenance; Dependabot for actions,
+  npm and pip.
+- `SECURITY.md` (private reporting; scope for an MCP server with network reach and an
+  unauthenticated web app), `CONTRIBUTING.md` and this changelog.
+
+### Security
+- Updated locked dependencies to clear all advisories reported by `npm audit`
+  (`@modelcontextprotocol/sdk`, `hono`, `qs`, `ws`, `body-parser` and others); `package.json`
+  ranges for runtime dependencies are unchanged.
+
+[Unreleased]: https://github.com/sergiudanstan/mqtt-mcp-server/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/sergiudanstan/mqtt-mcp-server/releases/tag/v1.1.0
