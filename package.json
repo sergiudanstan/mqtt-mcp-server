@@ -1,6 +1,6 @@
 {
   "name": "mqtt-mcp-server",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "An MCP server that provides MQTT client functionality",
   "type": "module",
   "main": "build/index.js",
@@ -12,6 +12,7 @@
     "watch": "tsc --watch",
     "start": "node build/index.js",
     "start:web": "node build/web-server.js",
+    "test": "npm run build && node --test test/*.test.mjs",
     "app": "bash start-app.sh",
     "setup": "bash setup-mcp.sh",
     "setup:windows": "powershell -ExecutionPolicy Bypass -File setup-mcp.ps1"
@@ -33,6 +34,7 @@
     "@types/node": "^22.10.2",
     "@types/express": "^4.17.21",
     "@types/ws": "^8.5.10",
+    "aedes": "1.2.0",
     "typescript": "^5.7.2"
   }
 }

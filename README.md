@@ -1,5 +1,10 @@
 # MQTT MCP Server
 
+[![CI](https://github.com/sergiudanstan/mqtt-mcp-server/actions/workflows/ci.yml/badge.svg)](https://github.com/sergiudanstan/mqtt-mcp-server/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/sergiudanstan/mqtt-mcp-server/actions/workflows/codeql.yml/badge.svg)](https://github.com/sergiudanstan/mqtt-mcp-server/actions/workflows/codeql.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/sergiudanstan/mqtt-mcp-server/badge)](https://scorecard.dev/viewer/?uri=github.com/sergiudanstan/mqtt-mcp-server)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 An MCP (Model Context Protocol) server that provides MQTT client functionality. This allows Claude to interact with MQTT brokers - publishing messages, subscribing to topics, and managing connections.
 
 Available in **both TypeScript (Node.js)** and **Python (FastMCP)** versions!
@@ -239,7 +244,15 @@ npm run build
 
 # Watch mode
 npm run watch
+
+# Tests (TypeScript server and web app, against an in-process broker)
+npm test
+
+# Python server tests
+pip install -r requirements.txt pytest && pytest -q tests
 ```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for branches and releases, [SECURITY.md](SECURITY.md) for the threat model and reporting vulnerabilities (note: the web app has no authentication and listens on all interfaces), and [CHANGELOG.md](CHANGELOG.md) for history.
 
 ## License
 
