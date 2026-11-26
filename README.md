@@ -60,7 +60,7 @@ Or manually add this to your Claude Desktop configuration file:
   "mcpServers": {
     "mqtt": {
       "command": "node",
-      "args": ["/Users/sara/TestAlin/build/index.js"]
+      "args": ["/absolute/path/to/mqtt-mcp-server/build/index.js"]
     }
   }
 }
@@ -102,6 +102,9 @@ Then open your browser to `http://localhost:3000`
 - `MQTT_BROKER`: MQTT broker URL (default: `mqtt://broker.hivemq.com:1883`)
 - `MQTT_TOPIC`: Topic to subscribe to (default: `color/change`)
 - `PORT`: Web server port (default: `3000`)
+- `HOST`: Interface to bind (default: `127.0.0.1`, loopback only). Set `HOST=0.0.0.0` only on a trusted network: the page's `POST /api/publish` and WebSocket have no authentication.
+
+> **The web app is a demo.** It has no authentication or rate limiting. The default broker `broker.hivemq.com` is a public broker: its topics are world-writable and world-readable, so anyone can publish to `color/change` and see your traffic. Use your own broker for anything beyond a demo.
 
 ### MCP Server Standalone
 
@@ -252,7 +255,7 @@ npm test
 pip install -r requirements.txt pytest && pytest -q tests
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for branches and releases, [SECURITY.md](SECURITY.md) for the threat model and reporting vulnerabilities (note: the web app has no authentication and listens on all interfaces), and [CHANGELOG.md](CHANGELOG.md) for history.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for branches and releases, [SECURITY.md](SECURITY.md) for the threat model and reporting vulnerabilities (note: the web app has no authentication and listens on loopback only unless `HOST` is set), and [CHANGELOG.md](CHANGELOG.md) for history.
 
 ## License
 

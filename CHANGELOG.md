@@ -6,6 +6,16 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-11-26
+
+### Fixed
+- Python server: paho callbacks printed diagnostics to stdout, which is the JSON-RPC channel
+  of a stdio MCP server; they now go to stderr. A test fails if anything non-JSON reaches stdout.
+- Web app binds `127.0.0.1` by default (`HOST` overrides it) instead of all interfaces, since
+  `POST /api/publish` is unauthenticated. The README says the web app is a demo and that the
+  default public broker is world-writable.
+- README config example no longer contains a personal path; `package.json` author is set.
+
 ## [1.1.1] - 2026-11-25
 
 ### Fixed

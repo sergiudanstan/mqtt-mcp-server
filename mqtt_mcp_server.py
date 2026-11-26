@@ -5,6 +5,7 @@ Provides MQTT client functionality through Model Context Protocol
 """
 
 import asyncio
+import sys
 from typing import Optional, Dict, Set
 import paho.mqtt.client as mqtt
 from fastmcp import FastMCP
@@ -27,10 +28,10 @@ def on_connect(client, userdata, flags, reason_code, properties=None):
     rc = reason_code if isinstance(reason_code, int) else reason_code.value if hasattr(reason_code, 'value') else 0
     if rc == 0:
         mqtt_connected = True
-        print(f"Connected to MQTT broker with result code {rc}", flush=True)
+        print(f"Connected to MQTT broker with result code {rc}", file=sys.stderr, flush=True)
     else:
         mqtt_connected = False
-        print(f"Failed to connect to MQTT broker with result code {rc}", flush=True)
+        print(f"Failed to connect to MQTT broker with result code {rc}", file=sys.stderr, flush=True)
 
 
 def on_disconnect(client, userdata, flags, reason_code, properties=None):
@@ -38,14 +39,14 @@ def on_disconnect(client, userdata, flags, reason_code, properties=None):
     global mqtt_connected
     mqtt_connected = False
     rc = reason_code if isinstance(reason_code, int) else reason_code.value if hasattr(reason_code, 'value') else 0
-    print(f"Disconnected from MQTT broker with result code {rc}", flush=True)
+    print(f"Disconnected from MQTT broker with result code {rc}", file=sys.stderr, flush=True)
 
 
 def on_message(client, userdata, msg):
     """Callback when MQTT message is received"""
     topic = msg.topic
     payload = msg.payload.decode('utf-8', errors='ignore')
-    print(f"Received message on topic '{topic}': {payload}", flush=True)
+    print(f"Received message on topic '{topic}': {payload}", file=sys.stderr, flush=True)
 
 
 @mcp.tool()
