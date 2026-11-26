@@ -147,3 +147,32 @@ def test_wrongly_typed_arguments_are_rejected_by_the_protocol_layer():
     result = call("mqtt_connect", broker_url="broker.example", port="not-a-number")
     assert result.is_error
     assert not FakeClient.instances
+
+
+def test_callbacks_write_nothing_to_stdout(capfd):
+    class Msg:
+        topic = "t"
+        payload = b"hello"
+
+    srv.on_connect(None, None, None, 0)
+    srv.on_connect(None, None, None, 5)
+    srv.on_message(None, None, Msg())
+    srv.on_disconnect(None, None, None, 0)
+    out, err = capfd.readouterr()
+    assert out == ""
+    assert "Connected to MQTT broker" in err
+
+
+def test_server_startup_writes_only_json_rpc_to_stdout():
+    import subprocess
+
+    init = json.dumps({"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {
+        "protocolVersion": "2024-11-05", "capabilities": {}, "clientInfo": {"name": "t", "version": "0"}}})
+    proc = subprocess.run(
+        [sys.executable, os.path.join(os.path.dirname(__file__), "..", "mqtt_mcp_server.py")],
+        input=init + "\n", capture_output=True, text=True, timeout=60,
+    )
+    lines = [ln for ln in proc.stdout.splitlines() if ln.strip()]
+    assert lines, proc.stderr
+    for ln in lines:
+        assert json.loads(ln)["jsonrpc"] == "2.0"

@@ -12,6 +12,8 @@ const __dirname = dirname(__filename);
 
 // Configuration
 const PORT = process.env.PORT || 3000;
+// Loopback by default: POST /api/publish is unauthenticated. Set HOST=0.0.0.0 to expose it.
+const HOST = process.env.HOST || "127.0.0.1";
 const MQTT_BROKER = process.env.MQTT_BROKER || "mqtt://broker.hivemq.com:1883";
 const MQTT_TOPIC = process.env.MQTT_TOPIC || "color/change";
 
@@ -184,8 +186,8 @@ function connectMQTT() {
 }
 
 // Start the server
-server.listen(PORT, () => {
-  console.log(`Web server running on http://localhost:${PORT}`);
+server.listen(Number(PORT), HOST, () => {
+  console.log(`Web server running on http://${HOST}:${PORT}`);
   console.log(`WebSocket server ready`);
   console.log(`MQTT Topic: ${MQTT_TOPIC}`);
   console.log(`\nSend a color name or hex code to the MQTT topic to change the background!`);

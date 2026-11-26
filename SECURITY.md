@@ -47,8 +47,8 @@ There is no bug bounty; credit is offered in the advisory and changelog.
   the broker supports it. The README's public test brokers are for synthetic data only.
 - **Untrusted broker content.** Received payloads are written to stderr by both servers
   and are not sanitised; treat them as untrusted input to whatever displays or reads them.
-- **Web app has no authentication.** `src/web-server.ts` calls `listen(PORT)` without a
-  host, so it accepts connections on all interfaces. `POST /api/publish` and the WebSocket
+- **Web app has no authentication.** `src/web-server.ts` binds `127.0.0.1` by default;
+  setting `HOST=0.0.0.0` makes it accept connections on all interfaces. `POST /api/publish` and the WebSocket
   are unauthenticated, accept any colour string, and have no rate limit: anyone who can
   reach the port can publish to the configured topic and see its traffic. Run it on
   localhost or behind your own authentication. The page writes received values with
